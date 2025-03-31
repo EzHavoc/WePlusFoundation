@@ -1,6 +1,8 @@
-import { Heart, Mail, Phone, MapPin } from 'lucide-react';
+import { Heart, Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
+  const socialLinks: string[] = ["Twitter", "Facebook", "Instagram", "LinkedIn"];
+
   return (
     <footer className="border-t-4 border-black bg-pink-300 p-8">
       <div className="container mx-auto grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -31,7 +33,7 @@ export default function Footer() {
         <div>
           <h3 className="text-xl font-bold">Follow Us</h3>
           <div className="mt-4 flex gap-4">
-            {['Twitter', 'Facebook', 'Instagram', 'LinkedIn'].map((social) => (
+            {socialLinks.map((social) => (
               <a
                 key={social}
                 href="#"

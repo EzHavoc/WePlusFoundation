@@ -1,7 +1,30 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Heart, Users, Calendar, Image } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Heart, Users, Calendar, IndianRupee } from "lucide-react";
+import { type Program } from "@/types";
+import { Link } from "react-router-dom";
 
 export default function Home() {
+  const programs: Program[] = [
+    {
+      title: "Food Bank",
+      description: "Providing meals to families in need",
+      image:
+        "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=400",
+    },
+    {
+      title: "Education Support",
+      description: "Helping children access quality education",
+      image:
+        "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=400",
+    },
+    {
+      title: "Healthcare Assistance",
+      description: "Providing medical aid to those in need",
+      image:
+        "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=400",
+    },
+  ];
+
   return (
     <div className="space-y-20 py-12">
       {/* Hero Section */}
@@ -16,9 +39,24 @@ export default function Home() {
               Join us in our mission to create positive change and support those in
               need through community action and compassion.
             </p>
-            <Button className="border-2 border-black bg-yellow-300 text-lg font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none">
-              Get Involved <ArrowRight className="ml-2" />
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                asChild
+                className="border-2 border-black bg-yellow-300 text-lg font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
+              >
+                <Link to="/get-involved">
+                  Get Involved <ArrowRight className="ml-2" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                className="border-2 border-black bg-pink-500 text-lg font-bold text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
+              >
+                <Link to="/donate">
+                  Donate Now <IndianRupee className="ml-2" />
+                </Link>
+              </Button>
+            </div>
           </div>
           <div className="relative">
             <img
@@ -34,12 +72,12 @@ export default function Home() {
       <section className="container mx-auto px-4">
         <div className="grid gap-6 md:grid-cols-3">
           {[
-            ['10K+', 'Lives Touched', Heart],
-            ['500+', 'Volunteers', Users],
-            ['200+', 'Events Organized', Calendar],
+            ["10K+", "Lives Touched", Heart],
+            ["500+", "Volunteers", Users],
+            ["200+", "Events Organized", Calendar],
           ].map(([number, label, Icon]) => (
             <div
-              key={label}
+              key={label as string}
               className="border-4 border-black bg-white p-6 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
             >
               <Icon className="mx-auto h-12 w-12" />
@@ -54,26 +92,7 @@ export default function Home() {
       <section className="container mx-auto px-4">
         <h2 className="mb-8 text-3xl font-black">Our Programs</h2>
         <div className="grid gap-8 md:grid-cols-3">
-          {[
-            {
-              title: 'Food Bank',
-              description: 'Providing meals to families in need',
-              image:
-                'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=400',
-            },
-            {
-              title: 'Education Support',
-              description: 'Helping children access quality education',
-              image:
-                'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=400',
-            },
-            {
-              title: 'Healthcare Assistance',
-              description: 'Providing medical aid to those in need',
-              image:
-                'https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=400',
-            },
-          ].map((program) => (
+          {programs.map((program) => (
             <div
               key={program.title}
               className="group border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[8px] hover:translate-y-[8px] hover:shadow-none"

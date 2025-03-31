@@ -1,34 +1,35 @@
-import { Quote } from 'lucide-react';
+import { Quote } from "lucide-react";
+import { type Testimonial } from "@/types";
 
 export default function Testimonials() {
-  const testimonials = [
+  const testimonials: Testimonial[] = [
     {
-      name: 'Sarah Johnson',
-      role: 'Beneficiary',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150',
+      name: "Sarah Johnson",
+      role: "Beneficiary",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150",
       quote:
-        'WePlus Foundation helped my family during our toughest times. Their support made all the difference in our lives.',
+        "WePlus Foundation helped my family during our toughest times. Their support made all the difference in our lives.",
     },
     {
-      name: 'Michael Chen',
-      role: 'Volunteer',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150',
+      name: "Michael Chen",
+      role: "Volunteer",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150",
       quote:
         "Volunteering with WePlus has been incredibly rewarding. Seeing the direct impact we make in people's lives is priceless.",
     },
     {
-      name: 'Emily Rodriguez',
-      role: 'Donor',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150',
+      name: "Emily Rodriguez",
+      role: "Donor",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150",
       quote:
-        'I trust WePlus Foundation completely. Their transparency and dedication to helping others is truly inspiring.',
+        "I trust WePlus Foundation completely. Their transparency and dedication to helping others is truly inspiring.",
     },
     {
-      name: 'David Thompson',
-      role: 'Community Partner',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150',
+      name: "David Thompson",
+      role: "Community Partner",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150",
       quote:
-        'Working with WePlus has amplified our impact in the community. Their organization and commitment are outstanding.',
+        "Working with WePlus has amplified our impact in the community. Their organization and commitment are outstanding.",
     },
   ];
 
