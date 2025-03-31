@@ -89,3 +89,9 @@ body {
     @apply bg-background text-foreground;
   }
 }
+@layer utilities {
+  ::selection {
+    background: #ba88ff; /* Yellow highlight */
+    color: #000;         /* Black text */
+  }
+}
