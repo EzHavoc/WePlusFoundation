@@ -6,6 +6,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { IndianRupee } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -16,13 +18,44 @@ const formSchema = z.object({
 
 export default function Donate() {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    navigate("/payment-details");
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const { error } = await supabase.from('donations').insert({
+        name: values.name,
+        email: values.email,
+        amount: parseFloat(values.amount),
+        pan: values.pan,
+        status: 'pending'
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to submit donation. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Success",
+        description: "Donation submitted successfully!",
+      });
+      
+      navigate("/payment-details");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
   }
 
   const suggestedAmounts = [500, 1000, 2000, 5000];

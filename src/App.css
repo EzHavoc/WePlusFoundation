@@ -4,13 +4,4 @@
   padding: 2rem;
   text-align: center;
 }
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-@layer utilities {
-  ::selection {
-    background: #fbbf24; /* Yellow highlight */
-    color: #000;         /* Black text */
-  }
-}

@@ -1,18 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { Copy, IndianRupee, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase"; // Import your Supabase client
+
+import { useEffect, useState } from "react";
 
 export default function PaymentDetails() {
   const { toast } = useToast();
+  const [paymentDetails, setPaymentDetails] = useState<any>(null); // Store payment details from the DB
 
-  const paymentDetails = {
-    accountName: "WePlus Foundation",
-    accountNumber: "1234567890",
-    ifscCode: "SBIN0123456",
-    bankName: "State Bank of India",
-    upiId: "weplus@upi",
-    qrCode: "https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?auto=format&fit=crop&w=500",
-  };
+  // Fetch payment details from Supabase when the component mounts
+  useEffect(() => {
+    const fetchPaymentDetails = async () => {
+      const { data, error } = await supabase.from("payment_details").select("*").single();
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Could not fetch payment details.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setPaymentDetails(data); // Set the fetched data into state
+    };
+
+    fetchPaymentDetails();
+  }, [toast]);
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -21,6 +36,11 @@ export default function PaymentDetails() {
       description: `${label} has been copied to clipboard`,
     });
   };
+
+  // If paymentDetails haven't been fetched yet, display loading
+  if (!paymentDetails) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -123,14 +143,25 @@ export default function PaymentDetails() {
               <Copy className="h-4 w-4" />
             </Button>
           </div>
-        </div>
 
-        <Button
-          onClick={() => window.history.back()}
-          className="w-full border-2 border-black bg-pink-500 font-bold text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
-        >
-          <IndianRupee className="mr-2" /> Back to Donation Form
-        </Button>
+          <div className="flex items-center justify-between rounded-lg border-2 border-black bg-gray-50 p-4">
+            <div>
+              <p className="text-sm text-gray-600">Amount</p>
+              <p className="font-bold">
+                <IndianRupee className="inline-block h-5 w-5 text-pink-500" />
+                {paymentDetails.amount}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => copyToClipboard(paymentDetails.amount.toString(), "Amount")}
+              className="border-2 border-black hover:bg-yellow-300"
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

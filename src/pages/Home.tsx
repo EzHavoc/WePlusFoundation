@@ -29,29 +29,23 @@ export default function Home() {
     <div className="space-y-20 py-12">
       {/* Hero Section */}
       <section className="container mx-auto px-4">
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-2 items-center">
           <div className="space-y-6">
             <h1 className="text-5xl font-black leading-tight">
               Together We Can Make
               <span className="block text-pink-500">A Difference</span>
             </h1>
-            <p className="text-xl">
+            <p className="text-xl text-gray-700">
               Join us in our mission to create positive change and support those in
               need through community action and compassion.
             </p>
             <div className="flex gap-4">
-              <Button
-                asChild
-                className="border-2 border-black bg-yellow-300 text-lg font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
-              >
+              <Button asChild className="border-2 border-black bg-yellow-300 text-lg font-bold shadow-md hover:shadow-none">
                 <Link to="/get-involved">
                   Get Involved <ArrowRight className="ml-2" />
                 </Link>
               </Button>
-              <Button
-                asChild
-                className="border-2 border-black bg-pink-500 text-lg font-bold text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
-              >
+              <Button asChild className="border-2 border-black bg-pink-500 text-lg font-bold text-white shadow-md hover:shadow-none">
                 <Link to="/donate">
                   Donate Now <IndianRupee className="ml-2" />
                 </Link>
@@ -62,7 +56,7 @@ export default function Home() {
             <img
               src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800"
               alt="Community support"
-              className="border-4 border-black object-cover shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+              className="border-4 border-black object-cover shadow-lg"
             />
           </div>
         </div>
@@ -74,15 +68,12 @@ export default function Home() {
           {[
             ["10K+", "Lives Touched", Heart],
             ["500+", "Volunteers", Users],
-            ["200+", "Events Organized", Calendar],
+            ["200+", "Events Organized", Calendar]
           ].map(([number, label, Icon]) => (
-            <div
-              key={label as string}
-              className="border-4 border-black bg-white p-6 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
-            >
-              <Icon className="mx-auto h-12 w-12" />
+            <div key={label as string} className="border-4 border-black bg-white p-6 text-center shadow-lg">
+              <Icon className="mx-auto h-12 w-12 text-pink-500" />
               <div className="mt-4 text-4xl font-black">{number}</div>
-              <div className="mt-2 text-xl font-bold">{label}</div>
+              <div className="mt-2 text-xl font-bold text-gray-700">{label}</div>
             </div>
           ))}
         </div>
@@ -93,10 +84,7 @@ export default function Home() {
         <h2 className="mb-8 text-3xl font-black">Our Programs</h2>
         <div className="grid gap-8 md:grid-cols-3">
           {programs.map((program) => (
-            <div
-              key={program.title}
-              className="group border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[8px] hover:translate-y-[8px] hover:shadow-none"
-            >
+            <div key={program.title} className="group border-4 border-black bg-white shadow-lg transition-transform hover:translate-x-2 hover:translate-y-2 hover:shadow-none">
               <img
                 src={program.image}
                 alt={program.title}
@@ -104,7 +92,7 @@ export default function Home() {
               />
               <div className="p-4">
                 <h3 className="text-xl font-bold">{program.title}</h3>
-                <p className="mt-2">{program.description}</p>
+                <p className="mt-2 text-gray-600">{program.description}</p>
               </div>
             </div>
           ))}

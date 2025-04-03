@@ -11,7 +11,7 @@ import Footer from "./components/Footer";
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_relativeSplatPath: true }}>
       <div className="min-h-screen w-full bg-[#FFFAF0]">
         <Navbar />
         <main className="w-full">
