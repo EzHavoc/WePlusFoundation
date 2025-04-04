@@ -3,10 +3,23 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Heart, Users, Calendar } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
@@ -35,6 +48,7 @@ export default function GetInvolved() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+  const [submitted, setSubmitted] = useState(false); // ✅ new state
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,15 +79,14 @@ export default function GetInvolved() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
+    setSubmitted(false);
     try {
       const { data, error } = await supabase
         .from("volunteers")
         .insert([values])
         .select("*");
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       setVolunteers((prev: Volunteer[]) => [data[0], ...prev]);
 
@@ -82,6 +95,7 @@ export default function GetInvolved() {
         description: "Your volunteer application has been submitted successfully!",
       });
 
+      setSubmitted(true); // ✅ show message
       form.reset();
     } catch (error) {
       console.error("Submission Error:", error);
@@ -96,9 +110,21 @@ export default function GetInvolved() {
   }
 
   const volunteerAreas = [
-    { title: "Food Distribution", icon: Heart, description: "Help distribute food to those in need" },
-    { title: "Education", icon: Users, description: "Support our educational programs" },
-    { title: "Event Organization", icon: Calendar, description: "Help organize and manage our events" },
+    {
+      title: "Food Distribution",
+      icon: Heart,
+      description: "Help distribute food to those in need",
+    },
+    {
+      title: "Education",
+      icon: Users,
+      description: "Support our educational programs",
+    },
+    {
+      title: "Event Organization",
+      icon: Calendar,
+      description: "Help organize and manage our events",
+    },
   ];
 
   return (
@@ -109,7 +135,10 @@ export default function GetInvolved() {
         <h2 className="mb-6 text-2xl font-bold">Volunteer Opportunities</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {volunteerAreas.map((area) => (
-            <div key={area.title} className="border-4 border-black bg-white p-6 shadow-md">
+            <div
+              key={area.title}
+              className="border-4 border-black bg-white p-6 shadow-md"
+            >
               <area.icon className="h-12 w-12 text-pink-500" />
               <h3 className="mt-4 text-xl font-bold">{area.title}</h3>
               <p className="mt-2 text-gray-600">{area.description}</p>
@@ -123,64 +152,116 @@ export default function GetInvolved() {
           <h2 className="mb-6 text-2xl font-bold">Volunteer Registration</h2>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField control={form.control} name="name" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl><Input {...field} className="border-2 border-black" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              
-              <FormField control={form.control} name="email" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl><Input {...field} type="email" className="border-2 border-black" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              
-              <FormField control={form.control} name="phone" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone</FormLabel>
-                  <FormControl><Input {...field} type="tel" className="border-2 border-black" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-
-              <FormField control={form.control} name="interest" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Area of Interest</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <SelectTrigger className="border-2 border-black">
-                        <SelectValue placeholder="Select an area" />
-                      </SelectTrigger>
+                      <Input {...field} className="border-2 border-black" />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="food">Food Distribution</SelectItem>
-                      <SelectItem value="education">Education</SelectItem>
-                      <SelectItem value="events">Event Organization</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <FormField control={form.control} name="message" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Message</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} className="border-2 border-black" placeholder="Tell us about yourself" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="email"
+                        className="border-2 border-black"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <Button type="submit" disabled={loading} className="w-full border-2 border-black bg-yellow-300">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="tel"
+                        className="border-2 border-black"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="interest"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Area of Interest</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value || ""}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-2 border-black">
+                          <SelectValue placeholder="Select an area" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="food">Food Distribution</SelectItem>
+                        <SelectItem value="education">Education</SelectItem>
+                        <SelectItem value="events">Event Organization</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Message</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        className="border-2 border-black"
+                        placeholder="Tell us about yourself"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full border-2 border-black bg-yellow-300"
+              >
                 {loading ? "Submitting..." : "Submit Application"}
               </Button>
             </form>
           </Form>
+
+          {/* ✅ Success Message Below Form */}
+          {submitted && (
+            <div className="mt-6 rounded-md border-2 border-green-700 bg-green-100 p-4 text-green-800">
+              🎉 Thank you for signing up! We’ve received your application and will contact you soon.
+            </div>
+          )}
         </div>
       </div>
     </div>

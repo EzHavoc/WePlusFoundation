@@ -180,3 +180,4 @@ DO $$ BEGIN
       USING (true);
   END IF;
 END $$;
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS transaction_id text;

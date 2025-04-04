@@ -3,7 +3,14 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { IndianRupee } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +21,10 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   amount: z.number().min(1, "Please enter a valid amount"),
-  pan: z.string().length(10, "PAN number must be exactly 10 characters").regex(/[A-Z]{5}[0-9]{4}[A-Z]{1}/, "Invalid PAN format"),
+  pan: z
+    .string()
+    .length(10, "PAN number must be exactly 10 characters")
+    .regex(/[A-Z]{5}[0-9]{4}[A-Z]{1}/, "Invalid PAN format"),
 });
 
 export default function Donate() {
@@ -30,13 +40,17 @@ export default function Donate() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      const { error } = await supabase.from("donations").insert({
-        name: values.name,
-        email: values.email,
-        amount: values.amount,
-        pan: values.pan.toUpperCase(),
-        status: "pending",
-      });
+      const { data, error } = await supabase
+        .from("donations")
+        .insert({
+          name: values.name,
+          email: values.email,
+          amount: values.amount,
+          pan: values.pan.toUpperCase(),
+          status: "pending",
+        })
+        .select('id')
+        .single();
 
       if (error) {
         toast({
@@ -49,11 +63,13 @@ export default function Donate() {
 
       toast({
         title: "Success",
-        description: "Donation submitted successfully!",
+        description: "Donation registered successfully! Please proceed to payment.",
       });
 
       form.reset();
-      setTimeout(() => navigate("/payment-details"), 500);
+      setTimeout(() => {
+        navigate(`/payment-details?donation_id=${data.id}&email=${encodeURIComponent(values.email)}`);
+      }, 1000);
     } catch (error) {
       toast({
         title: "Error",
@@ -97,7 +113,9 @@ export default function Donate() {
                 <Button
                   key={amount}
                   variant="outline"
-                  onClick={() => form.setValue("amount", amount, { shouldValidate: true })}
+                  onClick={() =>
+                    form.setValue("amount", amount, { shouldValidate: true })
+                  }
                   className="border-2 border-black bg-white font-bold shadow-md hover:shadow-none"
                 >
                   <IndianRupee className="mr-2 h-4 w-4" />
@@ -129,7 +147,11 @@ export default function Donate() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input {...field} type="email" className="border-2 border-black" />
+                      <Input
+                        {...field}
+                        type="email"
+                        className="border-2 border-black"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -167,7 +189,9 @@ export default function Donate() {
                         {...field}
                         className="border-2 border-black uppercase"
                         placeholder="ABCDE1234F"
-                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                        onChange={(e) =>
+                          field.onChange(e.target.value.toUpperCase())
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -179,7 +203,11 @@ export default function Donate() {
                 disabled={loading}
                 className="w-full border-2 border-black bg-pink-500 font-bold text-white shadow-md hover:shadow-none"
               >
-                {loading ? "Processing..." : <><IndianRupee className="mr-2" /> Proceed to Payment</>}
+                {loading ? "Processing..." : (
+                  <>
+                    <IndianRupee className="mr-2" /> Proceed to Payment
+                  </>
+                )}
               </Button>
             </form>
           </Form>
