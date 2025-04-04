@@ -29,7 +29,7 @@ export default function Home() {
     <div className="space-y-20 py-12">
       {/* Hero Section */}
       <section className="container mx-auto px-4">
-        <div className="grid gap-8 md:grid-cols-2 items-center">
+        <div className="grid items-center gap-8 md:grid-cols-2">
           <div className="space-y-6">
             <h1 className="text-5xl font-black leading-tight">
               Together We Can Make
@@ -55,8 +55,9 @@ export default function Home() {
           <div className="relative">
             <img
               src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800"
-              alt="Community support"
+              alt="People working together for community support"
               className="border-4 border-black object-cover shadow-lg"
+              loading="lazy"
             />
           </div>
         </div>
@@ -65,12 +66,12 @@ export default function Home() {
       {/* Impact Numbers */}
       <section className="container mx-auto px-4">
         <div className="grid gap-6 md:grid-cols-3">
-          {[
-            ["10K+", "Lives Touched", Heart],
-            ["500+", "Volunteers", Users],
-            ["200+", "Events Organized", Calendar]
-          ].map(([number, label, Icon]) => (
-            <div key={label as string} className="border-4 border-black bg-white p-6 text-center shadow-lg">
+          {[  
+            { number: "10K+", label: "Lives Touched", Icon: Heart },
+            { number: "500+", label: "Volunteers", Icon: Users },
+            { number: "200+", label: "Events Organized", Icon: Calendar }
+          ].map(({ number, label, Icon }) => (
+            <div key={label} className="border-4 border-black bg-white p-6 text-center shadow-lg transition-transform hover:translate-y-1 hover:shadow-none">
               <Icon className="mx-auto h-12 w-12 text-pink-500" />
               <div className="mt-4 text-4xl font-black">{number}</div>
               <div className="mt-2 text-xl font-bold text-gray-700">{label}</div>
@@ -87,8 +88,9 @@ export default function Home() {
             <div key={program.title} className="group border-4 border-black bg-white shadow-lg transition-transform hover:translate-x-2 hover:translate-y-2 hover:shadow-none">
               <img
                 src={program.image}
-                alt={program.title}
+                alt={`Image representing ${program.title}`}
                 className="h-48 w-full border-b-4 border-black object-cover"
+                loading="lazy"
               />
               <div className="p-4">
                 <h3 className="text-xl font-bold">{program.title}</h3>

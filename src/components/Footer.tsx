@@ -9,31 +9,33 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="border-t-4 border-black bg-pink-300 p-8">
-      <div className="container mx-auto grid grid-cols-1 gap-8 md:grid-cols-3">
+    <footer className="border-t-4 border-black bg-pink-300 py-10">
+      <div className="container mx-auto grid gap-12 px-4 md:grid-cols-3">
         
         {/* About Section */}
-        <div>
-          <div className="flex items-center gap-2 text-2xl font-black">
+        <div className="text-center md:text-left">
+          <div className="flex justify-center md:justify-start items-center gap-2 text-2xl font-black">
             <Heart className="h-6 w-6" />
-            WePlus Foundation
+            <span>WePlus Foundation</span>
           </div>
-          <p className="mt-2">Making the world a better place, one act at a time.</p>
+          <p className="mt-2 text-gray-800">
+            Making the world a better place, one act at a time.
+          </p>
         </div>
 
         {/* Contact Section */}
-        <div>
+        <div className="text-center md:text-left">
           <h3 className="text-xl font-bold">Contact Us</h3>
-          <div className="mt-4 space-y-2">
-            <p className="flex items-center gap-2">
+          <div className="mt-4 space-y-2 text-gray-800">
+            <p className="flex items-center justify-center md:justify-start gap-2">
               <Mail className="h-5 w-5" />
               contact@weplusfoundation.org
             </p>
-            <p className="flex items-center gap-2">
+            <p className="flex items-center justify-center md:justify-start gap-2">
               <Phone className="h-5 w-5" />
               +1 (555) 123-4567
             </p>
-            <p className="flex items-center gap-2">
+            <p className="flex items-center justify-center md:justify-start gap-2">
               <MapPin className="h-5 w-5" />
               123 Hope Street, Charity City
             </p>
@@ -41,16 +43,16 @@ export default function Footer() {
         </div>
 
         {/* Social Media Section */}
-        <div>
+        <div className="text-center md:text-left">
           <h3 className="text-xl font-bold">Follow Us</h3>
-          <div className="mt-4 flex gap-4">
+          <div className="mt-4 flex justify-center md:justify-start gap-4">
             {socialLinks.map(({ name, icon: Icon, href, hoverColor }) => (
               <a
                 key={name}
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group border-2 border-black bg-white p-3 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+                className="group flex items-center justify-center rounded-full border-2 border-black bg-white p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
               >
                 <Icon className={`h-6 w-6 text-black transition-colors duration-300 ${hoverColor}`} />
               </a>
@@ -58,6 +60,12 @@ export default function Footer() {
           </div>
         </div>
 
+      </div>
+
+      {/* Footer Bottom */}
+      <div className="mt-10 border-t border-black pt-6 text-center text-gray-800">
+        <p className="font-bold">&copy; {new Date().getFullYear()} WePlus Foundation. All rights reserved.</p>
+        <p>Committed to making a difference through community support.</p>
       </div>
     </footer>
   );

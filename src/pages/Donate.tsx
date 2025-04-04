@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -12,26 +13,29 @@ import { useToast } from "@/hooks/use-toast";
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  amount: z.string().min(1, "Please enter an amount"),
-  pan: z.string().min(10, "PAN number must be 10 characters").max(10),
+  amount: z.number().min(1, "Please enter a valid amount"),
+  pan: z.string().length(10, "PAN number must be exactly 10 characters").regex(/[A-Z]{5}[0-9]{4}[A-Z]{1}/, "Invalid PAN format"),
 });
 
 export default function Donate() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+  const [loading, setLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: { name: "", email: "", amount: 0, pan: "" },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     try {
-      const { error } = await supabase.from('donations').insert({
+      const { error } = await supabase.from("donations").insert({
         name: values.name,
         email: values.email,
-        amount: parseFloat(values.amount),
-        pan: values.pan,
-        status: 'pending'
+        amount: values.amount,
+        pan: values.pan.toUpperCase(),
+        status: "pending",
       });
 
       if (error) {
@@ -47,14 +51,17 @@ export default function Donate() {
         title: "Success",
         description: "Donation submitted successfully!",
       });
-      
-      navigate("/payment-details");
+
+      form.reset();
+      setTimeout(() => navigate("/payment-details"), 500);
     } catch (error) {
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -66,25 +73,23 @@ export default function Donate() {
 
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 grid gap-8 md:grid-cols-2">
-          <div className="border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="border-4 border-black bg-white p-6 shadow-lg">
             <h2 className="text-xl font-bold">Why Donate?</h2>
             <p className="mt-4">
-              Your contribution helps us continue our mission of supporting those in
-              need. Every donation makes a difference in someone's life.
+              Your contribution helps us continue our mission of supporting those in need. Every donation makes a difference in someone's life.
             </p>
           </div>
-          <div className="border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="border-4 border-black bg-white p-6 shadow-lg">
             <h2 className="text-xl font-bold">Tax Benefits</h2>
             <p className="mt-4">
-              All donations are eligible for tax deduction under Section 80G of the
-              Income Tax Act. You will receive a tax receipt via email.
+              All donations are eligible for tax deduction under Section 80G of the Income Tax Act. You will receive a tax receipt via email.
             </p>
           </div>
         </div>
 
-        <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div className="border-4 border-black bg-white p-8 shadow-lg">
           <h2 className="mb-6 text-2xl font-bold">Donation Form</h2>
-          
+
           <div className="mb-8">
             <h3 className="mb-4 font-bold">Suggested Amounts</h3>
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -92,8 +97,8 @@ export default function Donate() {
                 <Button
                   key={amount}
                   variant="outline"
-                  onClick={() => form.setValue("amount", amount.toString())}
-                  className="border-2 border-black bg-white font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
+                  onClick={() => form.setValue("amount", amount, { shouldValidate: true })}
+                  className="border-2 border-black bg-white font-bold shadow-md hover:shadow-none"
                 >
                   <IndianRupee className="mr-2 h-4 w-4" />
                   {amount}
@@ -137,7 +142,15 @@ export default function Donate() {
                   <FormItem>
                     <FormLabel>Amount (₹)</FormLabel>
                     <FormControl>
-                      <Input {...field} type="number" className="border-2 border-black" />
+                      <Input
+                        {...field}
+                        type="number"
+                        className="border-2 border-black"
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value);
+                          field.onChange(isNaN(value) ? "" : value);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -150,7 +163,12 @@ export default function Donate() {
                   <FormItem>
                     <FormLabel>PAN Number</FormLabel>
                     <FormControl>
-                      <Input {...field} className="border-2 border-black" placeholder="ABCDE1234F" />
+                      <Input
+                        {...field}
+                        className="border-2 border-black uppercase"
+                        placeholder="ABCDE1234F"
+                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -158,9 +176,10 @@ export default function Donate() {
               />
               <Button
                 type="submit"
-                className="w-full border-2 border-black bg-pink-500 font-bold text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
+                disabled={loading}
+                className="w-full border-2 border-black bg-pink-500 font-bold text-white shadow-md hover:shadow-none"
               >
-                <IndianRupee className="mr-2" /> Proceed to Payment
+                {loading ? "Processing..." : <><IndianRupee className="mr-2" /> Proceed to Payment</>}
               </Button>
             </form>
           </Form>

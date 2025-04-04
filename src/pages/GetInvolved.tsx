@@ -11,20 +11,40 @@ import { Heart, Users, Calendar } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
+// Define the Volunteer type
+type Volunteer = {
+  id?: number;
+  name: string;
+  email: string;
+  phone: string;
+  interest: string;
+  message: string;
+  created_at?: string;
+};
+
+// Form schema validation
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  interest: z.string({ required_error: "Please select an area of interest" }),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+  phone: z.string().regex(/^\d{10}$/, "Invalid phone number"),
+  interest: z.string().min(1, "Please select an area of interest"),
+  message: z.string().min(10, "Message must be at least 10 characters").trim(),
 });
 
 export default function GetInvolved() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [volunteers, setVolunteers] = useState([]);
+  const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      interest: "",
+      message: "",
+    },
   });
 
   useEffect(() => {
@@ -37,7 +57,7 @@ export default function GetInvolved() {
       if (error) {
         console.error("Fetch Error:", error);
       } else {
-        setVolunteers(data);
+        setVolunteers(data as Volunteer[]);
       }
     }
     fetchVolunteers();
@@ -46,21 +66,16 @@ export default function GetInvolved() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      console.log("Submitting:", values);
-
-      // Insert into Supabase without authentication
       const { data, error } = await supabase
         .from("volunteers")
         .insert([values])
         .select("*");
 
-      console.log("Supabase Response:", { data, error });
-
       if (error) {
         throw error;
       }
 
-      setVolunteers((prev) => [data[0], ...prev]);
+      setVolunteers((prev: Volunteer[]) => [data[0], ...prev]);
 
       toast({
         title: "Success",
@@ -135,7 +150,7 @@ export default function GetInvolved() {
               <FormField control={form.control} name="interest" render={({ field }) => (
                 <FormItem>
                   <FormLabel>Area of Interest</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
                     <FormControl>
                       <SelectTrigger className="border-2 border-black">
                         <SelectValue placeholder="Select an area" />

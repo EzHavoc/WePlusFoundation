@@ -13,9 +13,9 @@ export default function Events() {
     async function fetchEvents() {
       try {
         const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .order('date', { ascending: true });
+          .from("events")
+          .select("*")
+          .order("date", { ascending: true });
 
         if (error) {
           toast({
@@ -26,6 +26,7 @@ export default function Events() {
           return;
         }
 
+        console.log("Fetched Events:", data); // Debugging log
         setEvents(data);
       } catch (error) {
         toast({
@@ -41,27 +42,31 @@ export default function Events() {
     fetchEvents();
   }, [toast]);
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="mb-8 text-4xl font-black">Upcoming Events</h1>
-        <div className="flex items-center justify-center">
-          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-black"></div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="mb-8 text-4xl font-black">Upcoming Events</h1>
-      {events.length > 0 ? (
-        <EventCarousel events={events} />
-      ) : (
-        <div className="text-center text-gray-500">
-          No upcoming events at the moment.
-        </div>
-      )}
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* Main Content */}
+      <main className="container mx-auto flex-grow px-6 py-24">
+        <h1 className="mb-10 text-center text-5xl font-extrabold text-gray-900">
+          Upcoming Events
+        </h1>
+
+        {/* Loading State */}
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="h-16 w-16 animate-spin rounded-full border-4 border-gray-900"></div>
+          </div>
+        ) : events.length > 0 ? (
+          /* Event Carousel */
+          <div className="mx-auto w-full max-w-7xl h-[600px]">
+            <EventCarousel events={events} />
+          </div>
+        ) : (
+          /* No Events Message */
+          <div className="text-center text-xl text-gray-500">
+            No upcoming events at the moment.
+          </div>
+        )}
+      </main>
     </div>
   );
 }
