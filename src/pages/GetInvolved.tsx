@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -39,7 +39,7 @@ type Volunteer = {
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().regex(/^\d{10}$/, "Invalid phone number"),
+  phone: z.string().regex(/^[0-9]{10}$/, "Invalid phone number"),
   interest: z.string().min(1, "Please select an area of interest"),
   message: z.string().min(10, "Message must be at least 10 characters").trim(),
 });
@@ -47,8 +47,7 @@ const formSchema = z.object({
 export default function GetInvolved() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
-  const [submitted, setSubmitted] = useState(false); // ✅ new state
+  const [submitted, setSubmitted] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,41 +60,20 @@ export default function GetInvolved() {
     },
   });
 
-  useEffect(() => {
-    async function fetchVolunteers() {
-      const { data, error } = await supabase
-        .from("volunteers")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Fetch Error:", error);
-      } else {
-        setVolunteers(data as Volunteer[]);
-      }
-    }
-    fetchVolunteers();
-  }, []);
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     setSubmitted(false);
     try {
-      const { data, error } = await supabase
-        .from("volunteers")
-        .insert([values])
-        .select("*");
+      const { error } = await supabase.from("volunteers").insert([values]);
 
       if (error) throw error;
-
-      setVolunteers((prev: Volunteer[]) => [data[0], ...prev]);
 
       toast({
         title: "Success",
         description: "Your volunteer application has been submitted successfully!",
       });
 
-      setSubmitted(true); // ✅ show message
+      setSubmitted(true);
       form.reset();
     } catch (error) {
       console.error("Submission Error:", error);
@@ -173,11 +151,7 @@ export default function GetInvolved() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        type="email"
-                        className="border-2 border-black"
-                      />
+                      <Input type="email" {...field} className="border-2 border-black" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -191,11 +165,7 @@ export default function GetInvolved() {
                   <FormItem>
                     <FormLabel>Phone</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        type="tel"
-                        className="border-2 border-black"
-                      />
+                      <Input type="tel" {...field} className="border-2 border-black" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -208,10 +178,7 @@ export default function GetInvolved() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Area of Interest</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value || ""}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
                       <FormControl>
                         <SelectTrigger className="border-2 border-black">
                           <SelectValue placeholder="Select an area" />
@@ -256,7 +223,6 @@ export default function GetInvolved() {
             </form>
           </Form>
 
-          {/* ✅ Success Message Below Form */}
           {submitted && (
             <div className="mt-6 rounded-md border-2 border-green-700 bg-green-100 p-4 text-green-800">
               🎉 Thank you for signing up! We’ve received your application and will contact you soon.
