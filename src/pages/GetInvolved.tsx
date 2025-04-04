@@ -24,17 +24,6 @@ import { Heart, Users, Calendar } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
-// Define the Volunteer type
-type Volunteer = {
-  id?: number;
-  name: string;
-  email: string;
-  phone: string;
-  interest: string;
-  message: string;
-  created_at?: string;
-};
-
 // Form schema validation
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -65,7 +54,6 @@ export default function GetInvolved() {
     setSubmitted(false);
     try {
       const { error } = await supabase.from("volunteers").insert([values]);
-
       if (error) throw error;
 
       toast({
