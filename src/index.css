@@ -95,3 +95,15 @@ body {
     color: #000;         /* Black text */
   }
 }
+@layer utilities {
+  ::selection {
+    background-color: #ba88ff; /* Softer for mobile readability */
+    color: #000000;            /* High contrast text */
+  }
+
+  /* WebKit-specific pseudo-element for better iOS/Android support */
+  ::-moz-selection {
+    background-color: #ba88ff;
+    color: #000000;
+  }
+}
