@@ -26,7 +26,6 @@ export default function Events() {
           return;
         }
 
-        console.log("Fetched Events:", data); // Debugging log
         setEvents(data);
       } catch (error) {
         toast({
@@ -44,25 +43,22 @@ export default function Events() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Main Content */}
-      <main className="container mx-auto flex-grow px-6 py-24">
-        <h1 className="mb-10 text-center text-5xl font-extrabold text-gray-900">
+      <main className="container mx-auto flex-grow px-4 sm:px-6 py-16 sm:py-24">
+        <h1 className="mb-8 sm:mb-10 text-center text-3xl sm:text-5xl font-extrabold text-gray-900">
           Upcoming Events
         </h1>
 
         {/* Loading State */}
         {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="h-16 w-16 animate-spin rounded-full border-4 border-gray-900"></div>
+          <div className="flex items-center justify-center h-48 sm:h-64">
+            <div className="h-12 w-12 sm:h-16 sm:w-16 animate-spin rounded-full border-4 border-gray-900" />
           </div>
         ) : events.length > 0 ? (
-          /* Event Carousel */
-          <div className="mx-auto w-full max-w-7xl h-[600px]">
+          <div className="mx-auto w-full max-w-full sm:max-w-5xl md:max-w-6xl lg:max-w-7xl h-[400px] sm:h-[500px] md:h-[600px]">
             <EventCarousel events={events} />
           </div>
         ) : (
-          /* No Events Message */
-          <div className="text-center text-xl text-gray-500">
+          <div className="text-center text-base sm:text-xl text-gray-500">
             No upcoming events at the moment.
           </div>
         )}

@@ -12,9 +12,9 @@ export default function Gallery() {
     async function fetchGallery() {
       try {
         const { data, error } = await supabase
-          .from('gallery')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .from("gallery")
+          .select("*")
+          .order("created_at", { ascending: false });
 
         if (error) {
           toast({
@@ -42,38 +42,44 @@ export default function Gallery() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="mb-8 text-4xl font-black">Our Impact in Pictures</h1>
+      <div className="container mx-auto px-4 py-12 sm:py-16">
+        <h1 className="mb-6 text-3xl sm:text-4xl font-black text-center">
+          Our Impact in Pictures
+        </h1>
         <div className="flex items-center justify-center">
-          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-black"></div>
+          <div className="h-20 w-20 animate-spin rounded-full border-b-2 border-black sm:h-32 sm:w-32" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="mb-8 text-4xl font-black">Our Impact in Pictures</h1>
+    <div className="container mx-auto px-4 py-12 sm:py-16">
+      <h1 className="mb-6 text-3xl sm:text-4xl font-black text-center">
+        Our Impact in Pictures
+      </h1>
       {images.length > 0 ? (
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {images.map((image) => (
             <div
               key={image.url}
-              className="group relative border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[8px] hover:translate-y-[8px] hover:shadow-none"
+              className="group relative border-2 sm:border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
             >
               <img
                 src={image.url}
                 alt={image.caption}
-                className="h-64 w-full object-cover"
+                className="h-52 sm:h-64 w-full object-cover"
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 p-4 text-white">
-                <p className="text-lg font-bold">{image.caption}</p>
+              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-3 sm:p-4 text-white">
+                <p className="text-sm sm:text-base font-semibold">
+                  {image.caption}
+                </p>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="text-center text-gray-500">
+        <div className="text-center text-gray-500 text-base sm:text-lg">
           No gallery images available.
         </div>
       )}

@@ -5,7 +5,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Copy,QrCode } from "lucide-react";
+import { Copy, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -36,8 +36,8 @@ export default function PaymentDetails() {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const searchParams = new URLSearchParams(location.search);
-  const donationId = searchParams.get('donation_id');
-  const email = searchParams.get('email');
+  const donationId = searchParams.get("donation_id");
+  const email = searchParams.get("email");
 
   const form = useForm<z.infer<typeof transactionFormSchema>>({
     resolver: zodResolver(transactionFormSchema),
@@ -54,14 +54,12 @@ export default function PaymentDetails() {
       }
 
       try {
-        const query = supabase
-          .from('donations')
-          .select('*')
-          .eq('id', donationId)
-          .eq('email', email)
+        const { data, error } = await supabase
+          .from("donations")
+          .select("*")
+          .eq("id", donationId)
+          .eq("email", email)
           .single();
-
-        const { data, error } = await query;
 
         if (error) {
           toast({
@@ -93,12 +91,12 @@ export default function PaymentDetails() {
     setSubmitting(true);
     try {
       const { error } = await supabase
-        .from('donations')
+        .from("donations")
         .update({
           transaction_id: values.transaction_id,
-          status: 'completed'
+          status: "completed",
         })
-        .eq('id', donation.id);
+        .eq("id", donation.id);
 
       if (error) {
         toast({
@@ -110,11 +108,7 @@ export default function PaymentDetails() {
       }
 
       setShowSuccessDialog(true);
-
-      // Navigate after dialog closes
-      setTimeout(() => {
-        navigate('/');
-      }, 3500);
+      setTimeout(() => navigate("/"), 3500);
     } catch (error) {
       toast({
         title: "Error",
@@ -146,9 +140,9 @@ export default function PaymentDetails() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <h1 className="mb-8 text-4xl font-black">Payment Details</h1>
+        <h1 className="mb-8 text-3xl sm:text-4xl font-black">Payment Details</h1>
         <div className="flex items-center justify-center">
-          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-black"></div>
+          <div className="h-20 w-20 animate-spin rounded-full border-b-2 border-black"></div>
         </div>
       </div>
     );
@@ -157,20 +151,17 @@ export default function PaymentDetails() {
   if (!donation) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <h1 className="mb-8 text-4xl font-black">Payment Details</h1>
-        <div className="text-center text-gray-500">
-          No donation details found. Please try again.
-        </div>
+        <h1 className="mb-8 text-3xl sm:text-4xl font-black">Payment Details</h1>
+        <div className="text-center text-gray-500">No donation details found. Please try again.</div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="mb-8 text-4xl font-black">Payment Details</h1>
+    <div className="container mx-auto px-4 py-8 sm:py-12">
+      <h1 className="mb-8 text-3xl sm:text-4xl font-black">Payment Details</h1>
 
       <div className="mx-auto max-w-3xl space-y-8">
-        {/* Success Dialog */}
         <PaymentSuccessDialog
           open={showSuccessDialog}
           onOpenChange={setShowSuccessDialog}
@@ -178,110 +169,77 @@ export default function PaymentDetails() {
         />
 
         {/* Donation Summary */}
-        <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <h2 className="mb-6 text-2xl font-bold">Donation Summary</h2>
+        <div className="border-4 border-black bg-white p-4 sm:p-8 shadow-md sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold">Donation Summary</h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border-2 border-black bg-gray-50 p-4">
-              <div>
-                <p className="text-sm text-gray-600">Amount</p>
-                <p className="font-bold">₹{donation.amount}</p>
+            {[
+              { label: "Amount", value: `₹${donation.amount}` },
+              { label: "Status", value: donation.status },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-lg border-2 border-black bg-gray-50 p-4"
+              >
+                <div>
+                  <p className="text-sm text-gray-600">{item.label}</p>
+                  <p className="font-bold text-lg capitalize">{item.value}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center justify-between rounded-lg border-2 border-black bg-gray-50 p-4">
-              <div>
-                <p className="text-sm text-gray-600">Status</p>
-                <p className="font-bold capitalize">{donation.status}</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* QR Code Section */}
-        <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex flex-col items-center gap-4">
-            <QrCode className="h-16 w-16 text-pink-500" />
-            <h2 className="text-2xl font-bold">Scan QR Code</h2>
+        {/* QR Code */}
+        <div className="border-4 border-black bg-white p-4 sm:p-8 shadow-md sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <QrCode className="h-12 w-12 sm:h-16 sm:w-16 text-pink-500" />
+            <h2 className="text-xl sm:text-2xl font-bold">Scan QR Code</h2>
             <img
               src={paymentDetails.qrCode}
               alt="Payment QR Code"
-              className="h-64 w-64 border-4 border-black object-cover"
+              className="h-52 w-52 sm:h-64 sm:w-64 border-4 border-black object-cover"
             />
           </div>
         </div>
 
-        {/* Bank Details Section */}
-        <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <h2 className="mb-6 text-2xl font-bold">Bank Account Details</h2>
+        {/* Bank Details */}
+        <div className="border-4 border-black bg-white p-4 sm:p-8 shadow-md sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold">Bank Account Details</h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border-2 border-black bg-gray-50 p-4">
-              <div>
-                <p className="text-sm text-gray-600">Account Name</p>
-                <p className="font-bold">{paymentDetails.accountName}</p>
-              </div>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => copyToClipboard(paymentDetails.accountName, "Account name")}
-                className="border-2 border-black hover:bg-yellow-300"
+            {[
+              { label: "Account Name", value: paymentDetails.accountName },
+              { label: "Account Number", value: paymentDetails.accountNumber },
+              { label: "IFSC Code", value: paymentDetails.ifscCode },
+              { label: "Bank Name", value: paymentDetails.bankName },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-lg border-2 border-black bg-gray-50 p-4"
               >
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-between rounded-lg border-2 border-black bg-gray-50 p-4">
-              <div>
-                <p className="text-sm text-gray-600">Account Number</p>
-                <p className="font-bold">{paymentDetails.accountNumber}</p>
+                <div>
+                  <p className="text-sm text-gray-600">{item.label}</p>
+                  <p className="font-bold text-lg">{item.value}</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => copyToClipboard(item.value, item.label)}
+                  className="border-2 border-black hover:bg-yellow-300"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
               </div>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => copyToClipboard(paymentDetails.accountNumber, "Account number")}
-                className="border-2 border-black hover:bg-yellow-300"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-between rounded-lg border-2 border-black bg-gray-50 p-4">
-              <div>
-                <p className="text-sm text-gray-600">IFSC Code</p>
-                <p className="font-bold">{paymentDetails.ifscCode}</p>
-              </div>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => copyToClipboard(paymentDetails.ifscCode, "IFSC code")}
-                className="border-2 border-black hover:bg-yellow-300"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-between rounded-lg border-2 border-black bg-gray-50 p-4">
-              <div>
-                <p className="text-sm text-gray-600">Bank Name</p>
-                <p className="font-bold">{paymentDetails.bankName}</p>
-              </div>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => copyToClipboard(paymentDetails.bankName, "Bank name")}
-                className="border-2 border-black hover:bg-yellow-300"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* UPI Section */}
-        <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <h2 className="mb-6 text-2xl font-bold">UPI Payment</h2>
-          <div className="flex items-center justify-between rounded-lg border-2 border-black bg-gray-50 p-4">
+        {/* UPI */}
+        <div className="border-4 border-black bg-white p-4 sm:p-8 shadow-md sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold">UPI Payment</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-lg border-2 border-black bg-gray-50 p-4">
             <div>
               <p className="text-sm text-gray-600">UPI ID</p>
-              <p className="font-bold">{paymentDetails.upiId}</p>
+              <p className="font-bold text-lg">{paymentDetails.upiId}</p>
             </div>
             <Button
               variant="outline"
@@ -294,17 +252,17 @@ export default function PaymentDetails() {
           </div>
         </div>
 
-        {/* Transaction ID Form */}
-        <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <h2 className="mb-6 text-2xl font-bold">Confirm Your Payment</h2>
+        {/* Confirm Payment */}
+        <div className="border-4 border-black bg-white p-4 sm:p-8 shadow-md sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold">Confirm Your Payment</h2>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
               <FormField
                 control={form.control}
                 name="transaction_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Transaction ID</FormLabel>
+                    <FormLabel className="text-base sm:text-lg">Transaction ID</FormLabel>
                     <FormControl>
                       <Input
                         {...field}

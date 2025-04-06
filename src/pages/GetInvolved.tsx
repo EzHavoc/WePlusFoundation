@@ -24,7 +24,6 @@ import { Heart, Users, Calendar } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
-// Form schema validation
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
@@ -94,30 +93,36 @@ export default function GetInvolved() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="mb-8 text-4xl font-black">Get Involved</h1>
+    <div className="container mx-auto px-4 py-10 sm:py-14">
+      <h1 className="mb-6 text-3xl sm:text-4xl font-black text-center">Get Involved</h1>
 
-      <div className="mb-12">
-        <h2 className="mb-6 text-2xl font-bold">Volunteer Opportunities</h2>
-        <div className="grid gap-6 md:grid-cols-3">
+      {/* Volunteer Opportunities */}
+      <div className="mb-10">
+        <h2 className="mb-4 text-xl sm:text-2xl font-bold text-center sm:text-left">
+          Volunteer Opportunities
+        </h2>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {volunteerAreas.map((area) => (
             <div
               key={area.title}
-              className="border-4 border-black bg-white p-6 shadow-md"
+              className="border-2 sm:border-4 border-black bg-white p-5 sm:p-6 shadow-md"
             >
-              <area.icon className="h-12 w-12 text-pink-500" />
-              <h3 className="mt-4 text-xl font-bold">{area.title}</h3>
-              <p className="mt-2 text-gray-600">{area.description}</p>
+              <area.icon className="h-10 w-10 sm:h-12 sm:w-12 text-pink-500" />
+              <h3 className="mt-3 text-lg sm:text-xl font-bold">{area.title}</h3>
+              <p className="mt-2 text-sm sm:text-base text-gray-600">{area.description}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-8 border-4 border-black bg-white p-8 shadow-md">
-          <h2 className="mb-6 text-2xl font-bold">Volunteer Registration</h2>
+      {/* Volunteer Registration Form */}
+      <div className="mx-auto max-w-xl sm:max-w-2xl">
+        <div className="border-2 sm:border-4 border-black bg-white p-6 sm:p-8 shadow-md">
+          <h2 className="mb-6 text-xl sm:text-2xl font-bold text-center sm:text-left">
+            Volunteer Registration
+          </h2>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
               <FormField
                 control={form.control}
                 name="name"
@@ -204,7 +209,7 @@ export default function GetInvolved() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full border-2 border-black bg-yellow-300"
+                className="w-full border-2 border-black bg-yellow-300 text-black hover:bg-yellow-400"
               >
                 {loading ? "Submitting..." : "Submit Application"}
               </Button>
@@ -212,7 +217,7 @@ export default function GetInvolved() {
           </Form>
 
           {submitted && (
-            <div className="mt-6 rounded-md border-2 border-green-700 bg-green-100 p-4 text-green-800">
+            <div className="mt-6 rounded-md border border-green-700 bg-green-100 p-4 text-green-800 text-sm sm:text-base">
               🎉 Thank you for signing up! We’ve received your application and will contact you soon.
             </div>
           )}

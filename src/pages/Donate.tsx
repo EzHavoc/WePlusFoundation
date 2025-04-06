@@ -49,7 +49,7 @@ export default function Donate() {
           pan: values.pan.toUpperCase(),
           status: "pending",
         })
-        .select('id')
+        .select("id")
         .single();
 
       if (error) {
@@ -68,7 +68,11 @@ export default function Donate() {
 
       form.reset();
       setTimeout(() => {
-        navigate(`/payment-details?donation_id=${data.id}&email=${encodeURIComponent(values.email)}`);
+        navigate(
+          `/payment-details?donation_id=${data.id}&email=${encodeURIComponent(
+            values.email
+          )}`
+        );
       }, 1000);
     } catch (error) {
       toast({
@@ -84,31 +88,37 @@ export default function Donate() {
   const suggestedAmounts = [500, 1000, 2000, 5000];
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="mb-8 text-4xl font-black">Make a Donation</h1>
+    <div className="container mx-auto px-4 py-8 sm:py-12">
+      <h1 className="mb-6 sm:mb-8 text-3xl sm:text-4xl font-black text-center sm:text-left">
+        Make a Donation
+      </h1>
 
-      <div className="mx-auto max-w-3xl">
-        <div className="mb-8 grid gap-8 md:grid-cols-2">
-          <div className="border-4 border-black bg-white p-6 shadow-lg">
-            <h2 className="text-xl font-bold">Why Donate?</h2>
-            <p className="mt-4">
-              Your contribution helps us continue our mission of supporting those in need. Every donation makes a difference in someone's life.
+      <div className="mx-auto max-w-3xl space-y-6">
+        <div className="grid gap-6 sm:gap-8 sm:grid-cols-2">
+          <div className="border-4 border-black bg-white p-4 sm:p-6 shadow-md sm:shadow-lg rounded-lg">
+            <h2 className="text-lg sm:text-xl font-bold">Why Donate?</h2>
+            <p className="mt-3 text-sm sm:text-base">
+              Your contribution helps us continue our mission of supporting those in need. Every donation makes a difference.
             </p>
           </div>
-          <div className="border-4 border-black bg-white p-6 shadow-lg">
-            <h2 className="text-xl font-bold">Tax Benefits</h2>
-            <p className="mt-4">
-              All donations are eligible for tax deduction under Section 80G of the Income Tax Act. You will receive a tax receipt via email.
+          <div className="border-4 border-black bg-white p-4 sm:p-6 shadow-md sm:shadow-lg rounded-lg">
+            <h2 className="text-lg sm:text-xl font-bold">Tax Benefits</h2>
+            <p className="mt-3 text-sm sm:text-base">
+              All donations are eligible for tax deduction under Section 80G. You’ll receive a receipt via email.
             </p>
           </div>
         </div>
 
-        <div className="border-4 border-black bg-white p-8 shadow-lg">
-          <h2 className="mb-6 text-2xl font-bold">Donation Form</h2>
+        <div className="border-4 border-black bg-white p-5 sm:p-8 shadow-lg rounded-lg">
+          <h2 className="mb-5 sm:mb-6 text-xl sm:text-2xl font-bold">
+            Donation Form
+          </h2>
 
-          <div className="mb-8">
-            <h3 className="mb-4 font-bold">Suggested Amounts</h3>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="mb-6 sm:mb-8">
+            <h3 className="mb-3 text-base sm:text-lg font-bold">
+              Suggested Amounts
+            </h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
               {suggestedAmounts.map((amount) => (
                 <Button
                   key={amount}
@@ -116,9 +126,9 @@ export default function Donate() {
                   onClick={() =>
                     form.setValue("amount", amount, { shouldValidate: true })
                   }
-                  className="border-2 border-black bg-white font-bold shadow-md hover:shadow-none"
+                  className="border-2 border-black bg-white font-bold shadow-sm hover:shadow-none"
                 >
-                  <IndianRupee className="mr-2 h-4 w-4" />
+                  <IndianRupee className="mr-1 h-4 w-4" />
                   {amount}
                 </Button>
               ))}
@@ -126,7 +136,10 @@ export default function Donate() {
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 sm:space-y-6"
+            >
               <FormField
                 control={form.control}
                 name="name"

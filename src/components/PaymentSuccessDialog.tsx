@@ -14,10 +14,13 @@ interface PaymentSuccessDialogProps {
   amount: number;
 }
 
-export default function PaymentSuccessDialog({ open, onOpenChange, amount }: PaymentSuccessDialogProps) {
+export default function PaymentSuccessDialog({
+  open,
+  onOpenChange,
+  amount,
+}: PaymentSuccessDialogProps) {
   useEffect(() => {
     if (open) {
-      // Automatically close after 3 seconds
       const timer = setTimeout(() => {
         onOpenChange(false);
       }, 3000);
@@ -27,16 +30,17 @@ export default function PaymentSuccessDialog({ open, onOpenChange, amount }: Pay
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-4 border-black bg-white sm:max-w-md">
-        <DialogHeader>
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle className="h-12 w-12 text-green-600" />
+      <DialogContent className="border-4 border-black bg-white p-6 sm:p-8 sm:max-w-md rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <DialogHeader className="flex flex-col items-center text-center space-y-4">
+          <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-green-100">
+            <CheckCircle className="h-10 w-10 sm:h-12 sm:w-12 text-green-600" />
           </div>
-          <DialogTitle className="text-center text-2xl font-black">
+          <DialogTitle className="text-xl sm:text-2xl font-black">
             Payment Successful!
           </DialogTitle>
-          <DialogDescription className="text-center text-lg">
-            Thank you for your generous donation of ₹{amount}. Your support makes a difference!
+          <DialogDescription className="text-base sm:text-lg text-gray-700">
+            Thank you for your generous donation of ₹{amount}. <br className="hidden sm:block" />
+            Your support makes a difference!
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
